@@ -49,6 +49,9 @@
 
  % The optional argument of \title is used in the header
 \title[Integrating development and deployment in ML4H]{The Experimental Medicine Application Platform (EMAP):\titlebreak Integrated development and deployment in Machine Learning for Health}
+
+% The Experimental Medicine Application Platform (EMAP): Integrated development and deployment in Machine Learning for Health
+
 %  Full Title of Article\titlebreak This Title Has A Line Break
 
  % Anything in the title that should appear in the main title but 
@@ -59,31 +62,59 @@
 
 % TODO: remove authors for blinded submission
  % Authors with different addresses and equal first authors:
+
+% \author{%
+% \Name{Steve Harris}\equal{These authors contributed equally} \Email{s.harris8@nhs.net}\\
+% %\addr University X, Country 1
+% % footnotemark[1] is to refer to the \equal footnote
+% \Name{Tim Bonnici}\footnotemark[1] \Email{t.bonnici@nhs.net}\\
+% \Name{Tom Keen} \Email{t.keen@ucl.ac.uk}\\
+% \addr Institute of Health Informatics, University College London, UK
+% \AND
+% \Name{Roma Klapaukh} \Email{r.klapaukh@ucl.ac.uk}\\
+% \Name{Sarah Keating} \Email{s.keating@ucl.ac.uk}\\
+% \Name{Stef Piatek} \Email{s.piatek@ucl.ac.uk}\\
+% \Name{Nel Swanepoel} \Email{c.swanepoel@ucl.ac.uk}\\
+% \Name{Jonathan Cooper} \Email{j.p.cooper@ucl.ac.uk}\\
+% \addr Centre for Advanced Research Computing, University College London, UK
+% \AND
+% \Name{Zella King} \Email{zella.king@ucl.ac.uk}\\
+% \Name{Martin Utley} \Email{martin.utley@ucl.ac.uk}\\
+% \Name{Sonya Crowe} \Email{sonya.crowe@ucl.ac.uk}\\
+% \addr Clinical Operations Research Unit, University College London, UK
+% \AND
+% \Name{Aasiyah Rashan} \Email{aasiyah.rashan@nhs.net}\\
+% \Name{David Brealey} \Email{d.brealey@nhs.net}\\
+% \Name{Niall MacCallum} \Email{n.maccallum@nhs.net}\\
+% \Name{Mark White} \Email{mark.white4@nhs.net}\\
+% \addr University College London Hospital, UK
+% }
+
 \author{%
-\Name{Steve Harris}\equal{These authors contributed equally} \Email{s.harris8@nhs.net}\\
+\Name{Author X}\equal{These authors contributed equally} \Email{X@A}\\
 %\addr University X, Country 1
 % footnotemark[1] is to refer to the \equal footnote
-\Name{Tim Bonnici}\footnotemark[1] \Email{t.bonnici@nhs.net}\\
-\Name{Tom Keen} \Email{t.keen@ucl.ac.uk}\\
-\addr Institute of Health Informatics, University College London, UK
+\Name{Author X}\footnotemark[1] \Email{X@A}\\
+\Name{Author X} \Email{X@Y}\\
+\addr Institution A
 \AND
-\Name{Roma Klapaukh} \Email{r.klapaukh@ucl.ac.uk}\\
-\Name{Sarah Keating} \Email{s.keating@ucl.ac.uk}\\
-\Name{Stef Piatek} \Email{s.piatek@ucl.ac.uk}\\
-\Name{Nel Swanepoel} \Email{c.swanepoel@ucl.ac.uk}\\
-\Name{Jonathan Cooper} \Email{j.p.cooper@ucl.ac.uk}\\
-\addr Centre for Advanced Research Computing, University College London, UK
+\Name{Author X} \Email{X@B}\\
+\Name{Author X} \Email{X@B}\\
+\Name{Author X} \Email{X@B}\\
+\Name{Author X} \Email{X@B}\\
+\Name{Author X} \Email{X@B}\\
+\addr Institution B
 \AND
-\Name{Zella King} \Email{zella.king@ucl.ac.uk}\\
-\Name{Martin Utley} \Email{martin.utley@ucl.ac.uk}\\
-\Name{Sonya Crowe} \Email{sonya.crowe@ucl.ac.uk}\\
-\addr Clinical Operations Research Unit, University College London, UK
+\Name{Author X} \Email{X@C}\\
+\Name{Author X} \Email{X@C}\\
+\Name{Author X} \Email{X@C}\\
+\addr Institution C
 \AND
-\Name{Aasiyah Rashan} \Email{aasiyah.rashan@nhs.net}\\
-\Name{David Brealey} \Email{d.brealey@nhs.net}\\
-\Name{Niall MacCallum} \Email{n.maccallum@nhs.net}\\
-\Name{Mark White} \Email{mark.white4@nhs.net}\\
-\addr University College London Hospital, UK
+\Name{Author X} \Email{X@D}\\
+\Name{Author X} \Email{X@D}\\
+\Name{Author X} \Email{X@D}\\
+\Name{Author X} \Email{X@D}\\
+\addr Institution D
 }
 
 \begin{document}
@@ -113,34 +144,6 @@ The deployment process is \textit{online}. The algorithm must be instantiated ag
 Separate development and deployment domains mean that only the best algorithms can justify the expense of recreating the pipeline for deployment. But without deployment, it is not possible to evaluate the safety and efficacy an algorithm. Excellent performance on retrospective data does not mean that the predictions will be impactful or effective.\citep{the2021} \textit{Code to bedside} testing is needed to identify how predictive insights can be used by the clinical team to improve care.
 
 \subsection{The cost of separation}
-% This is a sample article that uses the \textsf{jmlr} class with
-% the \texttt{wcp} class option.  Please follow the guidelines in
-% this sample document as it can help to reduce complications when
-% combining the articles into a book. Please avoid using obsolete
-% commands, such as \verb|\rm|, and obsolete packages, such as
-% \textsf{epsfig}.\footnote{See
-% \url{http://www.ctan.org/pkg/l2tabu}} Some packages that are known
-% to cause problems for the production editing process are checked for
-% by the \textsf{jmlr} class and will generate an error. (If you want
-% to know more about the production editing process, have a look at
-% the video tutorials for the production editors at
-% \url{http://www.dickimaw-books.com/software/makejmlrbookgui/videos/}.)
-
-% Please also ensure that your document will compile with PDF\LaTeX.
-% If you have an error message that's puzzling you, first check for it
-% at the UK TUG FAQ
-% \url{https://texfaq.org/FAQ-man-latex}.  If
-% that doesn't help, create a minimal working example (see
-% \url{https://www.dickimaw-books.com/latex/minexample/}) and post
-% to somewhere like \TeX\ on StackExchange
-% (\url{http://tex.stackexchange.com/}) or the \LaTeX\ Community Forum
-% (\url{http://www.latex-community.org/forum/}).
-
-% \begin{note}
-% This is an numbered theorem-like environment that was defined in
-% this document's preamble.
-% \end{note}
-
 
 We argue that the structural separation of the offline and online stages creates enormous inefficiencies.\citep{vaitla2020a} This is akin to the classical 'bench to bedside' drug development pipeline where only a handful of molecules graduate from the thousands of candidates evaluated. For drugs, the pre-clinical (offline) stage is laboratory based, and distinct from the clinical (development) phase 1-3 drug trials. Cost increases moving through the pipeline, and the commercial return must be justified by efficacy and the potential market. Very few drugs will justify the investment to seek FDA approval. 
 
@@ -205,6 +208,7 @@ Initial success with the ED demand prediction has been followed with integrated 
 The work was supported by National Institute for Health Research (NIHR) University College London Hospitals Biomedical Research Centre (UCLH BRC), and University College London Hospital Charity.
 }
 
+\newpage
 \bibliography{jmlr-sample}
 
 \appendix
