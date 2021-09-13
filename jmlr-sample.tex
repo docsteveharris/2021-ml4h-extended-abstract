@@ -48,7 +48,7 @@
 \jmlrworkshop{Machine Learning for Health (ML4H) 2021} % W&CP title
 
  % The optional argument of \title is used in the header
-\title[Short Title]{An integrated development and deployment platform for machine learning for health}
+\title[Short Title]{The Experimental Medicine Application Platform (EMAP): an integrated development and deployment platform for machine learning for health}
 %  Full Title of Article\titlebreak This Title Has A Line Break
 
  % Anything in the title that should appear in the main title but 
@@ -57,55 +57,14 @@
 
  %\title{Title of the Article\titletag{\thanks{Some footnote}}}
 
-
- % Use \Name{Author Name} to specify the name.
- % If the surname contains spaces, enclose the surname
- % in braces, e.g. \Name{John {Smith Jones}} similarly
- % if the name has a "von" part, e.g \Name{Jane {de Winter}}.
- % If the first letter in the forenames is a diacritic
- % enclose the diacritic in braces, e.g. \Name{{\'E}louise Smith}
-
- % \thanks must come after \Name{...} not inside the argument for
- % example \Name{John Smith}\nametag{\thanks{A note}} NOT \Name{John
- % Smith\thanks{A note}}
-
- % Anything in the name that should appear in the title but not in the 
- % article's header or footer or in the volume's
- % table of contents should be placed inside \nametag{}
-
- % Two authors with the same address
- % \author{%
- %  \Name{Author Name1\nametag{\thanks{A note}}} \Email{abc@sample.com}\and
- %  \Name{Author Name2} \Email{xyz@sample.com}\\
- %  \addr Address
- % }
-
- % Three or more authors with the same address:
- % \author{%
- %  \Name{Author Name1} \Email{an1@sample.com}\\
- %  \Name{Author Name2} \Email{an2@sample.com}\\
- %  \Name{Author Name3} \Email{an3@sample.com}\\
- %  \Name{Author Name4} \Email{an4@sample.com}\\
- %  \Name{Author Name5} \Email{an5@sample.com}\\
- %  \Name{Author Name6} \Email{an6@sample.com}\\
- %  \Name{Author Name7} \Email{an7@sample.com}\\
- %  \Name{Author Name8} \Email{an8@sample.com}\\
- %  \Name{Author Name9} \Email{an9@sample.com}\\
- %  \Name{Author Name10} \Email{an10@sample.com}\\
- %  \Name{Author Name11} \Email{an11@sample.com}\\
- %  \Name{Author Name12} \Email{an12@sample.com}\\
- %  \Name{Author Name13} \Email{an13@sample.com}\\
- %  \Name{Author Name14} \Email{an14@sample.com}\\
- %  \addr Address
- % }
-
+% TODO: remove authors for blinded submission
  % Authors with different addresses and equal first authors:
 \author{%
 \Name{Steve Harris}\equal{These authors contributed equally} \Email{s.harris8@nhs.net}\\
 %\addr University X, Country 1
 % footnotemark[1] is to refer to the \equal footnote
 \Name{Tim Bonnici}\footnotemark[1] \Email{t.bonnici@nhs.net}\\
-\Name{Tom Keen}\footnotemark[1] \Email{t.keen@ucl.ac.uk}\\
+\Name{Tom Keen} \Email{t.keen@ucl.ac.uk}\\
 \addr Institute of Health Informatics, University College London, UK
 \AND
 \Name{Roma Klapaukh} \Email{r.klapaukh@ucl.ac.uk}\\
@@ -114,6 +73,11 @@
 \Name{Nel Swanepoel} \Email{c.swanepoel@ucl.ac.uk}\\
 \Name{Jonathan Cooper} \Email{j.p.cooper@ucl.ac.uk}\\
 \addr Centre for Advanced Research Computing, University College London, UK
+\AND
+\Name{Zella King} \Email{zella.king@ucl.ac.uk}\\
+\Name{Martin Utley} \Email{martin.utley@ucl.ac.uk}\\
+\Name{Sonya Crowe} \Email{sonya.crowe@ucl.ac.uk}\\
+\addr Clinical Operations Research Unit, University College London, UK
 \AND
 \Name{Aasiyah Rashan} \Email{aasiyah.rashan@nhs.net}\\
 \Name{David Brealey} \Email{d.brealey@nhs.net}\\
@@ -137,14 +101,15 @@ Electronic Health Records, Translational Medicine, Software Engineering
 \label{sec:intro}
 
 Machine learning for Health (ML4H) has been expected to impact patient outcomes through diagnostic insights, personalised treatment recommendations, and organisational optimisation.\citep{yu2018, topol2019a} Yet there are only a handful of examples of algorithms crossing the \say{AI chasm}: \say{the gulf between developing a scientifically sound algorithm and its use in any meaningful real-world applications.}\citep{keane2018a}\\
-This \textit{code to bedside} journey is classically separated into development and deployment stages.\\
+This \textit{code to bedside} journey is classically separated into development and deployment stages.
 \subsection{Development versus Deployment}
 \subsubsection{Development}
-The development process is \textit{offline}. An algorithm is developed against a static data extract from the reporting database downstream from the live Electronic Health Record (EHR). Code is written to  'tidy' the data, to generate labels and features, and to split the extract into train/test/validate subsets. An iterative process then ensues as different modelling approaches are investigated, the labels are refined, and features are updated, added or removed. Eventually, the final best model will be chosen for academic publication.\\
+The development process is \textit{offline}. An algorithm is developed against a static data extract from the reporting database downstream from the live Electronic Health Record (EHR). Consider a simple supervised learning scenario, code is written to  'tidy' the data, to generate labels and features, and to split the extract into train/validate/test subsets. An iterative process then ensues as different modelling approaches are investigated, the labels are refined, and features are updated, added or removed. Eventually, the final best model will be chosen for academic publication, and a handful will transition to deployment.
 \subsubsection{Deployment}
-The deployment process is \textit{online}. The algorithm must be instantiated against live data for clinical evaluation but the reporting database and the live record are typically modelled differently. The Extract-Transform-Load (ETL) process that generated the original static data extract comes from the reporting database that is built nightly and can rarely be made 'live'. This latency is unable to support inpatient clinical or operational decision making. Instead custom data feeds must be prepared directly from the EHR for each feature of the algorithm.\citep{sendak2020} Fast Healthcare Interoperability Resources (FHIR) Application Programming Interfaces (API) may help but are rarely comprehensive.[fhir-adoption] More importantly the technical skills required for deployment (web programming interfaces, application development) differ from those for development (data extraction [SQL], data wrangling and model building [Python, R etc.]). Often the deployment step requires a different team.\\
+The deployment process is \textit{online}. The algorithm must be instantiated against data resources with sufficiently low latency to support inpatient clinical or operational decision making. This typically requires an all-together different data pipeline from the development workflow above, as the ETL processes used to populate the reporting database (the source of static data extracts) can rarely be made live. Instead custom data feeds must be prepared directly from the EHR for each feature of the algorithm.\citep{sendak2020} Fast Healthcare Interoperability Resources (FHIR) Application Programming Interfaces (API) may help but are rarely comprehensive.\citep{jones2021} More importantly the technical skills required for deployment (web programming interfaces, application development) differ from those for development (data extraction [SQL], data wrangling and model building [Python, R etc.]) such that deployment often requires a different team. Finally, as deployment places a load on live hospital IT systems then a rigorous safety case must be developed which is incompatible with iterative development cycles.
 Separate development and deployment domains mean that only the best algorithms can justify the expense of recreating the pipeline for deployment. But without deployment, it is not possible to evaluate the safety and efficacy an algorithm. Excellent performance on retrospective data does not mean that the predictions will be impactful or effective.\citep{the2021} \textit{Code to bedside} testing is needed to identify how predictive insights can be used by the clinical team to improve care.
 
+\subsection{The cost of separation}
 % This is a sample article that uses the \textsf{jmlr} class with
 % the \texttt{wcp} class option.  Please follow the guidelines in
 % this sample document as it can help to reduce complications when
@@ -173,40 +138,32 @@ Separate development and deployment domains mean that only the best algorithms c
 % this document's preamble.
 % \end{note}
 
-\subsection{Problem statement}
+
 We argue that the structural separation of the offline and online stages creates enormous inefficiencies.\citep{vaitla2020a} This is akin to the classical 'bench to bedside' drug development pipeline where only a handful of molecules graduate from the thousands of candidates evaluated. For drugs, the pre-clinical (offline) stage is laboratory based, and distinct from the clinical (development) phase 1-3 drug trials. Cost increases moving through the pipeline, and the commercial return must be justified by efficacy and the potential market. Very few drugs will justify the investment to seek FDA or MHRA approval. 
 
-\begin{figure}[htbp]
+
+
+\begin{figure}[t]
  % Caption and label go in the first argument and the figure contents
  % go in the second argument
 \floatconts
-  {fig:nodes}
-  {\caption{Drug discovery}}
-  {\includegraphics[width=1.0\linewidth]{images/pipeline-drugs.png}}
+  {fig:algo-discovery}
+  {\caption{The cost of translation.}}
+%  {\includegraphics[width=1.0\linewidth]{images/pipeline-algorithms.png}}
+ {\includegraphics[width=1.0\linewidth]{images/emap-summary-funnel.png}}
+
 \end{figure}
 
-\begin{figure}[htbp]
- % Caption and label go in the first argument and the figure contents
- % go in the second argument
-\floatconts
-  {fig:nodes}
-  {\caption{Algorithm discovery}}
-  {\includegraphics[width=1.0\linewidth]{images/pipeline-algorithms.png}}
-\end{figure}
-
-
-![](../figs/pipeline-drugs.png)
-![](../figs/pipeline-algorithms.png)
-Improving the efficiency of this pathway is a key concern of traditional translational medicine[@ref for translational medicine], but is not yet an area of focus for digital translational medicine.
+Improving the efficiency of this pathway is a key concern of traditional translational medicine\citep{woolf2008}, but is not yet an area of focus for digital translational medicine.
 
 \section{Methods}
-We report here the Experimental Medicine Application Platform (EMAP) that unifies the data and the tools for off-line and online development of ML4H models. In brief, EMAP builds a patient orientated SQL database from HL7 version 2 (HL7v2) messages that are being exchanged between hospital systems. HL7v2 messages are ubiquitous in health care, and the de facto standard for internal communication.
+We report here the Experimental Medicine Application Platform (EMAP) that unifies the data and the tools for off-line and online development of ML4H models. In brief, EMAP builds a patient orientated SQL database from HL7 version 2 (HL7v2) messages that are being exchanged between hospital systems. HL7v2 messages are ubiquitous in health care, and the \textit{de facto} standard for internal communication.
 
 \subsection{Design principles}
 We adopted the following design principles.
 
 \subsubsection{Protection of operational systems}
-The EHR is a care tool as well as record, and clinical service must be prioritised above development work. Traditionally this means that EHR teams are rightly cautious of applications that are deployed against the live record. Yet the same technical and administrative controls that defend the system are not compatible with an iterative and agile approach to development and deployment.
+The EHR is a care tool as well as record, and clinical service must be prioritised above development work. Traditionally this means that EHR teams are rightly cautious of applications that are deployed against the live record. The same technical and administrative controls that defend the system are not compatible with an iterative and agile approach to development and deployment.
 EMAP is implemented as a shadow data store built from the ephemeral HL7 messages that are already used for communication between hospital systems. A single copy of each message is captured just once as it passes through the hospital integration engine adding only a minimal burden on the live system. Subsequent development is downstream of the EHR which is protected from malformed queries or other problems.
 
 \subsubsection{Live data}
@@ -214,22 +171,55 @@ The data must be available at the appropriate cadence for clinical and operation
 Live data brings an orthogonal but important secondary benefit in that it inverts the \textit{data to code} paradigm.\citep{guinney2018} Integrating development and deployment mandates a platform within the same security envelope as the EHR. This \textit{code to data} approach avoids many of the well known challenges of data sharing that troubles health data research.\citep{powles2017} Instead, developers come to work with data under the same controls and protections as the original record.
 
 \subsubsection{SQL as an API: \textit{Boring is good}}
-We wish to align the skills for development and deployment processes, and chose to use a relational database as the medium for data access and exchange. Development teams already use Structured Query Language (SQL) in their offline work. FHIR would be an attractive alternative but is not fit for bulk queries, nor able to handle procedures such as joins or aggregation.[@ref:SQL on FHIR] Flat (bulk) FHIR is not mature, nor designed for live interactions.[@ref: Epic documentation; FHIR team] We use the term 'SQL as an API' to reflect the division of responsibility. The ML4H team are protected from dealing with the local EHR implementation and HL7v2 adaptions, but have access to training and live data in the same model using familiar tools.
+We wish to align the skills for development and deployment processes, and chose to use a relational database as the medium for data access and exchange. Development teams already use Structured Query Language (SQL) in their offline work. FHIR would be an attractive alternative but is not fit for bulk queries, nor able to handle procedures such as joins or aggregation.\citep{2018c} Flat (bulk) FHIR is not mature, nor designed for live interactions.\citep{2021} We use the term 'SQL as an API' to reflect the division of responsibility. The ML4H team are protected from dealing with the local EHR implementation and HL7v2 adaptions, but have access to training and live data in the same model using familiar tools.
 
 \subsubsection{Community building}
 We used HL7v2 messages as our primary means of access to the EHR because this would allow EMAP to be used in other hospitals. We acknowledge that the flexibility of the HL7v2 specification (unlike FHIR) means that the interfaces would need adapting. This cost is offset by the widespread availability of existing HL7 feeds for key domains such as Admission/Discharge/Transfer (ADT), laboratory orders and results, and prescriptions. We also found it cost effective to implement new HL7 interfaces for notes, measurements and observations (e.g. vital signs).
 
 \subsection{Implementation}
-The EMAP data pipeline consists of the following components.
+Rather than multiple pairwise connections between different hospital electronic systems, an integration engine acts as a single hub that routes HL7 messages, and where necessary translates to ensure compatibility. EMAP  copies each message passing through the integration engine to a PostgreSQL database, the \textit{Immutable Data Store (IDS)} (see Figure \ref{fig:emap} and the [numbers] in the following sentences that refer to objects in the figure). A \textit{message reader}[2] processes each live message to an interchange format so that downstream processing is insulated from local HL7 implementation. Separately, the \textit{table reader}[5] processes historical data (e.g. from the reporting database) to the same interchange format. Live messages take priority over historical messages in a queue that feeds the \textit{event processor}[3]. This links each message to a patient and a hospital visit, makes appropriate updates for out of order messages, and merges when separate identifiers are recognised to represent the same patient. A full audit trail is maintained. Each event updates a second live PostgreSQL database, the \textit{User Data Store (UDS)}[4].\\
+The hospital hosts Jupyter and RStudio servers, and a Linux development environment is provided that allows docker deployment, installation of analysis libraries and frameworks, exposes SSH and HTTPS services, and allows user verification against the hospital active directory.[5] \\
+A typical workflow might include investigation and experimentation in a Jupyter Notebook with data from the UDS, then using a small network of docker containers to run the development script, log outputs to a testing database, and report to users via email or a locally hosted web application or dashboarding tool. \\
+A fuller explanation is available in Appendix \ref{apd:second}.
 
 \begin{figure}[htbp]
- % Caption and label go in the first argument and the figure contents
- % go in the second argument
+
 \floatconts
-  {fig:nodes}
+  {fig:emap}
   {\caption{Experimental Medicine Application Platform}}
-  {\includegraphics[width=1.0\linewidth]{images/emap-summary-Page-1.png}}
+  {\includegraphics[width=1.0\linewidth]{images/emap-summary-emap-summary.png}}
 \end{figure}
+
+\section{Case Study}
+Early identification of patients attending the Emergency Department (ED) who would require admission to a hospital bed could improve operational efficiency. We built models to predict a 'decision to admit' at the moment of arrival to the ED, and updated the predictions as further clinical information became available. These individual predictions were aggregated to create an estimate of the total bed demand. Live estimates of total demand were used to make decisions about elective surgical work, and to pro-actively accelerate planned discharges. 
+A secondary objective was to improve performance against the national target of admission within 4 hours from ED.\citep{kings2021} \\
+Important features for the arrival model included age, mode of arrival (ambulance versus walking), recent hospitalisation, initial ED location (resuscitation, majors or minors), and vital signs at triage. Subsequent models included information on laboratory orders, then results, treatments and updated vital signs. Individual predictions were generated from random forest and gradient boosting classifiers. The AUC in the validation data increased from 0.85 on arrival to 0.88 after 2 hours (as clinical information was added), and then fell to 0.83 at 6 hours as class imbalance decreased and the population at risk changed.\\
+We transitioned these models from offline to live, and started an iterative process with the end users (ED clinicians and the bed management team) who guided model development and deployment into their workflow. Clinician advice improved feature engineering for acute physiology by adopting classification boundaries from severity of illness scores. We responded to requests for interpretable outputs but generating displays of feature weights for individual predictions. And we organised model runs (at 6am, 12pm, 4pm, and 10pm) around the daily workflow of the bed management team.\\
+All updates and modifications were done by the development team, and would not have been possible without a live deployment to stimulate feedback.  
+
+\section{Discussion}
+Initial success with the ED demand prediction has been followed with integrated development-deployment projects for antibiotics stewardship, and length of stay predictions for the ICU ...
+
+\acks{
+The work was supported by National Institute for Health Research (NIHR) University College London Hospitals Biomedical Research Centre (UCLH BRC), and University College London Hospital Charity.
+}
+
+\bibliography{jmlr-sample}
+
+\appendix
+
+\section{First Appendix}\label{apd:first}
+
+
+\section{EMAP implementation}\label{apd:second}
+
+\begin{figure*}[htbp]
+\floatconts
+  {fig:emap-summary-large}
+  {\caption{EMAP: the Experimental Medicine Application Platform}}
+ {\includegraphics[width=1.0\textwidth]{images/emap-summary-emap-summary.png}}
+
+\end{figure*}
 
 \begin{enumerate}
     \item An additional interface is connected to the hospital HL7 integration engine that consumes a subset of all messages.
@@ -245,37 +235,5 @@ The EMAP data pipeline consists of the following components.
     \end{enumerate}
 \end{enumerate}
 
-\section{Case Study}
-Early identification of patients attending the Emergency Department (ED) who would require admission to a hospital bed could improve operational efficiency. We built models to predict a 'decision to admit' at the moment of arrival to the ED, and updated the predictions as further clinical information became available. These individual predictions were aggregated to create an estimate of the total bed demand. Live estimates of total demand were used to make decisions about elective surgical work, and to pro-actively accelerate planned discharges. 
-A secondary objective was to improve performance against the national target of admission within 4 hours from ED.\citep{kings2021} \\
-Important features for the arrival model included age, mode of arrival (ambulance versus walking), recent hospitalisation, initial ED location (resuscitation, majors or minors), and vital signs at triage. Subsequent models included information on laboratory orders, then results, treatments and updated vital signs. Individual predictions were generated from random forest and gradient boosting classifiers. The AUC in the validation data increased from 0.85 on arrival to 0.88 after 2 hours (as clinical information was added), and then fell to 0.83 at 6 hours as class imbalance decreased and the population at risk changed.\\
-We transitioned these models from offline to live, and started an iterative process with the end users (ED clinicians and the bed management team) who guided model development and deployment into their workflow. Clinician advice improved feature engineering for acute physiology by adopting classification boundaries from severity of illness scores. We responded to requests for interpretable outputs but generating displays of feature weights for individual predictions. And we organised model runs (at 6am, 12pm, 4pm, and 10pm) around the daily workflow of the bed management team.\\
-All updates and modifications were done by the development team, and would not have been possible without a live deployment to stimulate feedback.  
-
-\section{Discussion}
-
-TODO
-
-
-The bibliography is displayed using \verb|\bibliography|.
-
-\acks{Acknowledgements go here.}
-
-\bibliography{jmlr-sample}
-
-\appendix
-
-\section{First Appendix}\label{apd:first}
-
-Appendices aren't included in the 4 page limit\\
-Neither are references\\
-But they warn that the appendix might not be read by the judges\\
-
-TODO: Could place larger versions of the figures here
-TODO: Could move some of the detail of the pipeline here
-
-\section{Second Appendix}\label{apd:second}
-
-This is the second appendix.
 
 \end{document}
