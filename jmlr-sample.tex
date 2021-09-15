@@ -195,17 +195,19 @@ A fuller explanation is available in Appendix \ref{apd:second}.
 \end{figure}
 
 \section{Case Study}
-Early identification of patients attending the Emergency Department (ED) who would require admission to a hospital bed could improve operational efficiency. We built models to predict a 'decision to admit' at the moment of arrival to the ED, and updated the predictions as further clinical information became available. These individual predictions were aggregated to create an estimate of the total bed demand. Live estimates of total demand were used to make decisions about elective surgical work, and to pro-actively accelerate planned discharges. 
+Early identification of patients attending the Emergency Department (ED) who would require admission to a hospital bed could improve operational efficiency. We built models to predict future admission at the moment of arrival to the ED, and updated the predictions as further clinical information became available. These individual predictions were aggregated to create probability distribution of future bed demand. Live estimates of total demand would be used to make decisions about elective surgical work, and to pro-actively accelerate planned discharges. 
 A secondary objective was to improve performance against the national target of admission within 4 hours from ED.\citep{kings2021} \\
 Important features for the arrival model included age, mode of arrival (ambulance versus walking), recent hospitalisation, initial ED location (resuscitation, majors or minors), and vital signs at triage. Subsequent models included information on laboratory orders, then results, treatments and updated vital signs. Individual predictions were generated from random forest and gradient boosting classifiers. The AUC in the validation data increased from 0.85 on arrival to 0.88 after 2 hours (as clinical information was added), and then fell to 0.83 at 6 hours as class imbalance decreased and the population at risk changed.\\
-We transitioned these models from offline to live, and started an iterative process with the end users (ED clinicians and the bed management team) who guided model development and deployment into their workflow. Clinician advice improved feature engineering for acute physiology by adopting classification boundaries from severity of illness scores. We responded to requests for interpretable outputs but generating displays of feature weights for individual predictions. And we organised model runs (at 6am, 12pm, 4pm, and 10pm) around the daily workflow of the bed management team.\\
+We transitioned these models from offline to live, and started an iterative process with the end users (ED clinicians and the bed management team) who guided model development and deployment into their workflow. Clinician advice improved feature engineering for acute physiology by adopting classification boundaries from severity of illness scores. We responded to requests for interpretable outputs by generating displays of feature weights for individual predictions. And we organised model runs (at 6am, 12pm, 4pm, and 10pm) around the daily workflow of the bed management team.\\
 All updates and modifications were done by the development team, and would not have been possible without a live deployment to stimulate feedback.  
 
 \section{Conclusion}
 Initial success with the ED demand prediction has been followed with integrated development-deployment projects for antibiotics stewardship, and length of stay predictions for the ICU. 
 
 \acks{
-The work was supported by National Institute for Health Research (NIHR) University College London Hospitals Biomedical Research Centre (UCLH BRC), and University College London Hospital Charity.
+The work was supported by A and B.
+
+% The work was supported by National Institute for Health Research (NIHR) University College London Hospitals Biomedical Research Centre (UCLH BRC), and University College London Hospital Charity.
 }
 
 \newpage
@@ -221,13 +223,13 @@ See Figure \ref{fig:emap-summary-large} in Appendix \ref{apd:second} for a visua
     \item An additional interface is connected to the hospital HL7 integration engine that consumes a subset of all messages.
     \item These messages are copied to a PostgreSQL database called the Immutable Data Store (IDS). Each raw message is stored with a unique message identifier and a small amount of metadata (e.g. message source, message type, message timestamp). With the IDS, it becomes possible to replay messages from any point in time, and therefore rebuild at will any downstream structures.
     \item The \textbf{message-reader} processes the live messages as they appear in the IDS. It converts each message to an in-house interchange format that is coded as a Java package involving a set of serialisable Java classes, serialised test messages for integration and system testing and helper methods for testing. The format has been designed to formalise custom HL7 implementation semantics into use-specific fields, allowing the processing of these messages downstream to be ignorant of HL7. 
-    \item Separately, a \textbf{table-reader} performs the same job as the message-reader but working from one or more databases rather than the message store. This permits access to historical data that was shared prior to the 'go-live' date of any particular feed. It also allows ingestion of data that is not yet being shared through the integration engine. Both the message-reader and the table-reader convert to the same interchange format.
-    \item Messages, in the interchange format, are batched and sent to an appropriate queue managed by a RabbitMQ server. Priority is given to messages originating with the live stream. Each queue has a maximum number of messages that are allowed, and the services publishing to the queues implement an exponential backoff policy to limit the amount of disk space used by the queues.
+    \item Separately, a \textbf{table-reader} performs the same job as the message-reader but working from one or more databases rather than the message store. This permits access to historical data that was shared prior to the "go-live" date of any particular feed. It also allows ingestion of data that is not yet being shared through the integration engine. Both the message-reader and the table-reader convert to the same interchange format.
+    \item Messages, in the interchange format, are batched and sent to an appropriate queue managed by a RabbitMQ server. Priority is given to messages originating with the live stream. Each queue has a maximum number of messages that are allowed, and the services publishing to the queues implement an exponential back off policy to limit the amount of disk space used by the queues.
     \item A \textbf{event-processor} receives and processes messages from the RabbitMQ server. Processing involves managing a set of identifiers that allows each data item from the message to be linked to a patient (via a medical record number [MRN]) and the healthcare encounter. Specific issues that are managed by the event-processor include:
     \begin{enumerate}
-        \item \textit{Inferring context}: HL7 messages are normally sent with a single purpose: to notify an admission, or discharge, request a laboratory test or update a result. However, each message contains segments of contextual information including demographics, and context about that hospital encounter. This means that we can infer that a patient was admitted from a discharge message, or a test was ordered from a result message, and so on. We use this 'by stander' information to construct as complete a view of the current and ongoing state of the hospital as possible.
-        \item \textit{Messages arriving out of order}: Messages will sometimes arrive out of order. For example, a discharge before an admission. The **event-processor** infers context where necessary to make sense of these situations, and then corrects and updates when prior information is made available at a later time.
-        \item \textit{Patients having more than one MRN}: Patients may inadvertently re-register with the hospital because sufficient information is not available to match to an existing record or because erroneous information blocks a match. The records will eventually be flagged for a merge, and the **event-processor** will both update the stored identifiers and maintain an audit record of the change.
+        \item \textit{Inferring context}: HL7 messages are normally sent with a single purpose: to notify an admission, or discharge, request a laboratory test or update a result. However, each message contains segments of contextual information including demographics, and context about that hospital encounter. This means that we can infer that a patient was admitted from a discharge message, or a test was ordered from a result message, and so on. We use this "by stander" information to construct as complete a view of the current and ongoing state of the hospital as possible.
+        \item \textit{Messages arriving out of order}: Messages will sometimes arrive out of order. For example, a discharge before an admission. The \textbf{event-processor} infers context where necessary to make sense of these situations, and then corrects and updates when prior information is made available at a later time.
+        \item \textit{Patients having more than one MRN}: Patients may inadvertently re-register with the hospital because sufficient information is not available to match to an existing record or because erroneous information blocks a match. The records will eventually be flagged for a merge, and the \textbf{event-processor} will both update the stored identifiers and maintain an audit record of the change.
     \end{enumerate}
 \end{enumerate}
 
@@ -240,7 +242,7 @@ See Figure \ref{fig:emap-summary-large} in Appendix \ref{apd:second} for a visua
   {fig:algo-discovery-large}
   {\caption{The cost of translation.}}
 %  {\includegraphics[width=1.0\linewidth]{images/pipeline-algorithms.png}}
- {\includegraphics[width=1.0\textwidth]{images/emap-summary-funnel.png}}
+ {\includegraphics[width=0.8\textwidth]{images/emap-summary-funnel.png}}
 
 \end{figure*}
 
@@ -248,7 +250,7 @@ See Figure \ref{fig:emap-summary-large} in Appendix \ref{apd:second} for a visua
 \floatconts
   {fig:emap-summary-large}
   {\caption{EMAP: the Experimental Medicine Application Platform}}
- {\includegraphics[width=1.0\textwidth]{images/emap-summary-emap-summary.png}}
+ {\includegraphics[width=0.8\textwidth]{images/emap-summary-emap-summary.png}}
 
 \end{figure*}
 
